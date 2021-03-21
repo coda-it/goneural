@@ -1,6 +1,6 @@
 package goneural
 
-// Netwok - layerd feed forward neural network
+// Network - layerd feed forward neural network
 type Network struct {
 	layers             []*Layer
 	LearningRate       float64
@@ -62,7 +62,7 @@ func (n *Network) errorCalculation(outputs []float64, expected []float64) {
 func (n *Network) updateWeights() {
 	for _, l := range n.layers {
 		for _, p := range l.neurons {
-			for wk, _ := range p.Weight {
+			for wk := range p.Weight {
 				p.Weight[wk] += n.LearningRate * p.Delta * p.Input
 			}
 		}
