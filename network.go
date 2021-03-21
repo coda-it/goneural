@@ -2,8 +2,10 @@ package goneural
 
 // Netwok - layerd feed forward neural network
 type Network struct {
-	layers       []*Layer
-	LearningRate float64
+	layers             []*Layer
+	LearningRate       float64
+	TransferFunction   func(netSignal float64) float64
+	TransferDerivative func(netSignal float64) float64
 }
 
 // Think - feeds singals forward through whole network and produce output signals
@@ -27,7 +29,7 @@ func (n *Network) Think(inputs []float64) []float64 {
 			}
 
 			p.Input = signal
-			p.Output = p.TransferFunction(signal)
+			p.Output = n.TransferFunction(signal)
 
 			if lk == len(n.layers)-1 {
 				outputs = append(outputs, p.Output)
@@ -44,13 +46,13 @@ func (n *Network) errorCalculation(outputs []float64, expected []float64) {
 
 		for pk, p := range l.neurons {
 			if lk == len(n.layers)-1 {
-				p.Delta = (expected[pk] - p.Output) * p.SigmoidDerivative(p.Output)
+				p.Delta = (expected[pk] - p.Output) * n.TransferDerivative(p.Output)
 
 			} else {
 				nextLayer := n.layers[lk+1]
 
 				for _, i := range nextLayer.neurons {
-					p.Delta += i.Weight[pk] * i.Delta * p.SigmoidDerivative(p.Output)
+					p.Delta += i.Weight[pk] * i.Delta * n.TransferDerivative(p.Output)
 				}
 			}
 		}
