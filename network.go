@@ -6,30 +6,34 @@ type Network struct {
 	LearningRate       float64
 	TransferFunction   func(netSignal float64) float64
 	TransferDerivative func(netSignal float64) float64
+	DebugMode          bool
+	MeanError          float64
 }
 
-// Think - feeds singals forward through whole network and produce output signals
+// Think - feeds input data aand forward through whole network and produce outputs
 func (n *Network) Think(inputs []float64) []float64 {
 	var outputs []float64
 
 	for lk, l := range n.layers {
 		for _, p := range l.neurons {
-			signal := 0.0
+			activation := 0.0
+			p.Input = []float64{}
 
 			if lk == 0 {
 				for ik, i := range inputs {
-					signal += i * p.Weight[ik]
+					activation += i * p.Weight[ik]
+					p.Input = append(p.Input, i)
 				}
 			} else {
 				previousLayer := n.layers[lk-1]
 
-				for ik, i := range previousLayer.neurons {
-					signal += i.Output*p.Weight[ik] + p.Bias
+				for nk, n := range previousLayer.neurons {
+					p.Input = append(p.Input, n.Output)
+					activation += n.Output*p.Weight[nk]
 				}
 			}
-
-			p.Input = signal
-			p.Output = n.TransferFunction(signal)
+			activation += p.Bias*p.BiasWeight
+			p.Output = n.TransferFunction(activation)
 
 			if lk == len(n.layers)-1 {
 				outputs = append(outputs, p.Output)
@@ -40,37 +44,29 @@ func (n *Network) Think(inputs []float64) []float64 {
 	return outputs
 }
 
-func (n *Network) errorCalculation(outputs []float64, expected []float64) {
+// BackPropagate - adjust neural network weights
+func (n *Network) BackPropagate(expected []float64) {
 	for lk := len(n.layers) - 1; lk >= 0; lk-- {
 		l := n.layers[lk]
 
 		for pk, p := range l.neurons {
 			if lk == len(n.layers)-1 {
-				p.Delta = (expected[pk] - p.Output) * n.TransferDerivative(p.Output)
-
+				p.Error = expected[pk] - p.Output
 			} else {
 				nextLayer := n.layers[lk+1]
+				p.Error = 0.0
 
 				for _, i := range nextLayer.neurons {
-					p.Delta += i.Weight[pk] * i.Delta * n.TransferDerivative(p.Output)
+					p.Error += i.Weight[pk] * i.Delta
 				}
 			}
-		}
-	}
-}
 
-func (n *Network) updateWeights() {
-	for _, l := range n.layers {
-		for _, p := range l.neurons {
+			p.Delta = p.Error * n.TransferDerivative(p.Output)
+
 			for wk := range p.Weight {
-				p.Weight[wk] += n.LearningRate * p.Delta * p.Input
+				p.Weight[wk] = p.Weight[wk] + n.LearningRate*p.Delta*p.Input[wk]
 			}
+			p.BiasWeight = p.BiasWeight + n.LearningRate*p.Delta*p.Bias
 		}
 	}
-}
-
-// BackPropagate - adjust neural network weights
-func (n *Network) BackPropagate(outputs []float64, expected []float64) {
-	n.errorCalculation(outputs, expected)
-	n.updateWeights()
 }
