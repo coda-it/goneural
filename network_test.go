@@ -1,10 +1,7 @@
 package goneural
 
 import (
-	"fmt"
 	"math/rand"
-	"os"
-	"os/exec"
 	"testing"
 )
 
@@ -18,18 +15,18 @@ func TestNetwork(t *testing.T) {
 				&Layer{
 					neurons: []*Neuron{
 						&Neuron{
-							Weight: []float64{rand.Float64(), rand.Float64()},
-							Bias: 1,
+							Weight:     []float64{rand.Float64(), rand.Float64()},
+							Bias:       1,
 							BiasWeight: rand.Float64(),
 						},
 						&Neuron{
-							Weight: []float64{rand.Float64(), rand.Float64()},
-							Bias: 1,
+							Weight:     []float64{rand.Float64(), rand.Float64()},
+							Bias:       1,
 							BiasWeight: rand.Float64(),
 						},
 						&Neuron{
-							Weight: []float64{rand.Float64(), rand.Float64()},
-							Bias: 1,
+							Weight:     []float64{rand.Float64(), rand.Float64()},
+							Bias:       1,
 							BiasWeight: rand.Float64(),
 						},
 					},
@@ -37,8 +34,8 @@ func TestNetwork(t *testing.T) {
 				&Layer{
 					neurons: []*Neuron{
 						&Neuron{
-							Weight: []float64{rand.Float64(), rand.Float64(), rand.Float64()},
-							Bias: 1,
+							Weight:     []float64{rand.Float64(), rand.Float64(), rand.Float64()},
+							Bias:       1,
 							BiasWeight: rand.Float64(),
 						},
 					},
@@ -46,56 +43,42 @@ func TestNetwork(t *testing.T) {
 			},
 		}
 
+		for i := 0; i < 60000; i++ {
+			o1 := network.Think([]float64{0, 0})
+			network.BackPropagate([]float64{0})
+
+			o2 := network.Think([]float64{0, 1})
+			network.BackPropagate([]float64{1})
+
+			o3 := network.Think([]float64{1, 0})
+			network.BackPropagate([]float64{1})
+
+			o4 := network.Think([]float64{1, 1})
+			network.BackPropagate([]float64{0})
+
+			DebugNetwork(network, i, o1, o2, o3, o4)
+		}
+
 		var outputs []float64
 
-		for i := 0; i < 60000; i++ {
-			outputs1 := network.Think([]float64{0, 0})
-			network.BackPropagate([]float64{0})
-
-			outputs2 := network.Think([]float64{0, 1})
-			network.BackPropagate([]float64{1})
-
-			outputs3 := network.Think([]float64{1, 0})
-			network.BackPropagate([]float64{1})
-
-			outputs4 := network.Think([]float64{1, 1})
-			network.BackPropagate([]float64{0})
-
-			fmt.Printf("Epoch = %d\n", i)
-			fmt.Printf("W[0,0] = %f, %f\n", network.layers[0].neurons[0].Weight, network.layers[0].neurons[0].BiasWeight)
-			fmt.Printf("W[0,1] = %f, %f\n", network.layers[0].neurons[1].Weight, network.layers[0].neurons[1].BiasWeight)
-			fmt.Printf("W[1,0] = %f, %f\n", network.layers[1].neurons[0].Weight, network.layers[1].neurons[0].BiasWeight)
-			fmt.Printf("E[0,0] = %f, I=%f\n", network.layers[0].neurons[0].Error, network.layers[0].neurons[0].Input)
-			fmt.Printf("E[0,1] = %f, I=%f\n", network.layers[0].neurons[1].Error, network.layers[0].neurons[1].Input)
-			fmt.Printf("E[1,0] = %f, I=%f\n", network.layers[1].neurons[0].Error, network.layers[1].neurons[0].Input)
-			fmt.Printf("O[0 XOR 0] = %f\n", outputs1[0])
-			fmt.Printf("O[0 XOR 1] = %f\n", outputs2[0])
-			fmt.Printf("O[1 XOR 0] = %f\n", outputs3[0])
-			fmt.Printf("O[1 XOR 1] = %f\n", outputs4[0])
-			c := exec.Command("clear")
-			c.Stdout = os.Stdout
-			c.Run()
-		}
-
 		outputs = network.Think([]float64{0, 0})
-		fmt.Println("(0,0)", outputs)
 		if !(outputs[0] <= 0.1) {
-			t.Errorf("(0,0) XOR not resolved properly")
+			t.Errorf("(0 XOR 0) should be close to 0")
 		}
+
 		outputs = network.Think([]float64{1, 0})
-		fmt.Println("(1,0)", outputs)
 		if !(outputs[0] >= 0.9) {
-			t.Errorf("(1,0) XOR not resolved properly")
+			t.Errorf("(1 XOR 0) should be close to 1")
 		}
-		fmt.Println("(0,1)", outputs)
+
 		outputs = network.Think([]float64{0, 1})
 		if !(outputs[0] >= 0.9) {
-			t.Errorf("(0,1) XOR not resolved properly")
+			t.Errorf("(0 XOR 1) should be close to 1")
 		}
-		fmt.Println("(1,1)", outputs)
+
 		outputs = network.Think([]float64{1, 1})
-		if !(outputs[0] <= 0.1) {
-			t.Errorf("(1,1) XOR not resolved properly")
+		if !(outputs[0] < 0.01) {
+			t.Errorf("(1 XOR 1) should be close to 0")
 		}
 	})
 }

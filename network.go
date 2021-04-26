@@ -10,7 +10,7 @@ type Network struct {
 	MeanError          float64
 }
 
-// Think - feeds input data aand forward through whole network and produce outputs
+// Think - feeds input data and forward through whole network and produce outputs
 func (n *Network) Think(inputs []float64) []float64 {
 	var outputs []float64
 
@@ -21,18 +21,18 @@ func (n *Network) Think(inputs []float64) []float64 {
 
 			if lk == 0 {
 				for ik, i := range inputs {
-					activation += i * p.Weight[ik]
 					p.Input = append(p.Input, i)
+					activation += i * p.Weight[ik]
 				}
 			} else {
 				previousLayer := n.layers[lk-1]
 
 				for nk, n := range previousLayer.neurons {
 					p.Input = append(p.Input, n.Output)
-					activation += n.Output*p.Weight[nk]
+					activation += n.Output * p.Weight[nk]
 				}
 			}
-			activation += p.Bias*p.BiasWeight
+			activation += p.Bias * p.BiasWeight
 			p.Output = n.TransferFunction(activation)
 
 			if lk == len(n.layers)-1 {
@@ -56,8 +56,8 @@ func (n *Network) BackPropagate(expected []float64) {
 				nextLayer := n.layers[lk+1]
 				p.Error = 0.0
 
-				for _, i := range nextLayer.neurons {
-					p.Error += i.Weight[pk] * i.Delta
+				for _, n := range nextLayer.neurons {
+					p.Error += n.Weight[pk] * n.Delta
 				}
 			}
 
