@@ -75,7 +75,7 @@ func TestNetwork(t *testing.T) {
 		}
 
 		outputs = network.Think([]float64{1, 1})
-		if !(outputs[0] < 0.01) {
+		if !(outputs[0] < 0.1) {
 			t.Errorf("(1 XOR 1) should be close to 0")
 		}
 	})
