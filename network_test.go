@@ -44,19 +44,17 @@ func TestNetwork(t *testing.T) {
 		}
 
 		for i := 0; i < 60000; i++ {
-			o1 := network.Think([]float64{0, 0})
+			network.Think([]float64{0, 0})
 			network.BackPropagate([]float64{0})
 
-			o2 := network.Think([]float64{0, 1})
+			network.Think([]float64{0, 1})
 			network.BackPropagate([]float64{1})
 
-			o3 := network.Think([]float64{1, 0})
+			network.Think([]float64{1, 0})
 			network.BackPropagate([]float64{1})
 
-			o4 := network.Think([]float64{1, 1})
+			network.Think([]float64{1, 1})
 			network.BackPropagate([]float64{0})
-
-			DebugNetwork(network, i, o1, o2, o3, o4)
 		}
 
 		var outputs []float64
