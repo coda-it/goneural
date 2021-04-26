@@ -1,6 +1,7 @@
 package goneural
 
 import (
+	"fmt"
 	"math/rand"
 	"testing"
 )
@@ -43,7 +44,7 @@ func TestNetwork(t *testing.T) {
 			},
 		}
 
-		for i := 0; i < 60000; i++ {
+		for i := 0; i < 2000; i++ {
 			network.Think([]float64{0, 0})
 			network.BackPropagate([]float64{0})
 
@@ -60,21 +61,25 @@ func TestNetwork(t *testing.T) {
 		var outputs []float64
 
 		outputs = network.Think([]float64{0, 0})
+		fmt.Println("xor:", outputs)
 		if !(outputs[0] <= 0.1) {
 			t.Errorf("(0 XOR 0) should be close to 0")
 		}
 
 		outputs = network.Think([]float64{1, 0})
+		fmt.Println("xor:", outputs)
 		if !(outputs[0] >= 0.9) {
 			t.Errorf("(1 XOR 0) should be close to 1")
 		}
 
 		outputs = network.Think([]float64{0, 1})
+		fmt.Println("xor:", outputs)
 		if !(outputs[0] >= 0.9) {
 			t.Errorf("(0 XOR 1) should be close to 1")
 		}
 
 		outputs = network.Think([]float64{1, 1})
+		fmt.Println("xor:", outputs)
 		if !(outputs[0] < 0.1) {
 			t.Errorf("(1 XOR 1) should be close to 0")
 		}
