@@ -12,7 +12,7 @@ func DebugNetwork(network Network, epoch int, outputs ...[]float64) {
 
 	for lk, l := range network.layers {
 		for nk, n := range l.neurons {
-			fmt.Printf("N[%d,%d]\tI=%f\tW=%f\tE=%f\n", lk, nk, n.Input, n.Weight, n.Error)
+			fmt.Printf("N[%d,%d]\tI=%f\tW=%f\tBW=%f\tE=%f\n", lk, nk, n.Input, n.Weight, n.BiasWeight, n.Error)
 		}
 	}
 

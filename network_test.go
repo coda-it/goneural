@@ -20,12 +20,7 @@ func TestNetwork(t *testing.T) {
 							BiasWeight: rand.Float64(),
 						},
 						&Neuron{
-							Weight:     []float64{rand.Float64(), rand.Float64()},
-							Bias:       1,
-							BiasWeight: rand.Float64(),
-						},
-						&Neuron{
-							Weight:     []float64{rand.Float64(), rand.Float64()},
+							Weight:     []float64{-rand.Float64(), -rand.Float64()},
 							Bias:       1,
 							BiasWeight: rand.Float64(),
 						},
@@ -34,7 +29,7 @@ func TestNetwork(t *testing.T) {
 				&Layer{
 					neurons: []*Neuron{
 						&Neuron{
-							Weight:     []float64{rand.Float64(), rand.Float64(), rand.Float64()},
+							Weight:     []float64{rand.Float64(), -rand.Float64()},
 							Bias:       1,
 							BiasWeight: rand.Float64(),
 						},
@@ -43,7 +38,7 @@ func TestNetwork(t *testing.T) {
 			},
 		}
 
-		for i := 0; i < 2000; i++ {
+		for i := 0; i < 20000; i++ {
 			network.Think([]float64{0, 0})
 			network.BackPropagate([]float64{0})
 
@@ -89,17 +84,12 @@ func TestNetwork(t *testing.T) {
 				&Layer{
 					neurons: []*Neuron{
 						&Neuron{
-							Weight:     []float64{rand.Float64(), rand.Float64(), rand.Float64(), rand.Float64()},
+							Weight:     []float64{-rand.Float64(), rand.Float64(), -rand.Float64(), rand.Float64()},
 							Bias:       1,
 							BiasWeight: rand.Float64(),
 						},
 						&Neuron{
-							Weight:     []float64{rand.Float64(), rand.Float64(), rand.Float64(), rand.Float64()},
-							Bias:       1,
-							BiasWeight: rand.Float64(),
-						},
-						&Neuron{
-							Weight:     []float64{rand.Float64(), rand.Float64(), rand.Float64(), rand.Float64()},
+							Weight:     []float64{rand.Float64(), -rand.Float64(), rand.Float64(), -rand.Float64()},
 							Bias:       1,
 							BiasWeight: rand.Float64(),
 						},
@@ -108,12 +98,12 @@ func TestNetwork(t *testing.T) {
 				&Layer{
 					neurons: []*Neuron{
 						&Neuron{
-							Weight:     []float64{rand.Float64(), rand.Float64(), rand.Float64()},
+							Weight:     []float64{-rand.Float64(), rand.Float64()},
 							Bias:       1,
 							BiasWeight: rand.Float64(),
 						},
 						&Neuron{
-							Weight:     []float64{rand.Float64(), rand.Float64(), rand.Float64()},
+							Weight:     []float64{rand.Float64(), -rand.Float64()},
 							Bias:       1,
 							BiasWeight: rand.Float64(),
 						},
