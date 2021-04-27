@@ -16,8 +16,7 @@ func SigmoidDerivative(netSignal float64) float64 {
 
 // Tanh - activation function
 func Tanh(netSignal float64) float64 {
-	normalized := math.Min(netSignal, 2)
-	return (math.Exp(normalized) - math.Exp(-normalized)) / (math.Exp(normalized) + math.Exp(-normalized))
+	return (math.Exp(netSignal) - math.Exp(-netSignal)) / (math.Exp(netSignal) + math.Exp(-netSignal))
 }
 
 // TanhDerivative - activation function
